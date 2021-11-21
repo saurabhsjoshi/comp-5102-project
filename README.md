@@ -19,4 +19,20 @@ helm repo add rook-release https://charts.rook.io/release
 helm install --create-namespace --namespace rook-ceph rook-ceph rook-release/rook-ceph
 ```
 5. Make sure Rook operator is running `kubectl -n rook-ceph get pod`
-6. Create the Ceph cluster 
+6. Disks need to be cleaned everytime a new cluster is created
+```commandline
+# For each disk
+DISK="/dev/sdd"
+sudo sgdisk --zap-all $DISK
+sudo dd if=/dev/zero of="$DISK" bs=1M count=100 oflag=direct,dsync
+sudo blkdiscard $DISK
+```
+7. Create the Ceph cluster. WARNING: Make sure you check all the attributes in values-override.yaml (device filters etc)
+```commandline
+helm install --create-namespace --namespace rook-ceph rook-ceph-cluster \
+   --set operatorNamespace=rook-ceph rook-release/rook-ceph-cluster -f values-override.yaml
+```
+
+
+8. Check Ceph cluster status `kubectl -n rook-ceph get cephcluster`
+8.1. To delete Ceph cluster `helm delete --namespace rook-ceph rook-ceph-cluster`

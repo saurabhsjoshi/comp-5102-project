@@ -51,8 +51,8 @@ cephClusterSpec:
   # The path on the host where configuration files will be persisted. Must be specified.
   # Important: if you reinstall the cluster, make sure you delete this directory from each host or else the mons will fail to start on the new cluster.
   # In Minikube, the '/data' directory is configured to persist across reboots. Use "/data/rook" in Minikube environment.
-  dataDirHostPath: /var/lib/rook
-
+  dataDirHostPath: /data/rook
+  
   # Whether or not upgrade should continue even if a check fails
   # This means Ceph's status could be degraded and we don't recommend upgrading but you might decide otherwise
   # Use at your OWN risk
@@ -234,20 +234,25 @@ cephClusterSpec:
   #   mgr: rook-ceph-mgr-priority-class
 
   storage: # cluster level storage configuration and selection
-    useAllNodes: true
-    useAllDevices: true
-    # deviceFilter:
-    # config:
+    useAllNodes: false
+    useAllDevices: false
+    #deviceFilter: (sdc|sdd|sde)
+    config:
     #   crushRoot: "custom-root" # specify a non-default root label for the CRUSH map
     #   metadataDevice: "md0" # specify a non-rotational storage so ceph-volume will use it as block db device of bluestore.
-    #   databaseSizeMB: "1024" # uncomment if the disks are smaller than 100 GB
-    #   journalSizeMB: "1024"  # uncomment if the disks are 20 GB or smaller
-    #   osdsPerDevice: "1" # this value can be overridden at the node or device level
+      databaseSizeMB: "256" # uncomment if the disks are smaller than 100 GB
+      journalSizeMB: "256"  # uncomment if the disks are 20 GB or smaller
+      osdsPerDevice: "1" # this value can be overridden at the node or device level
     #   encryptedDevice: "true" # the default value for this option is "false"
     # # Individual nodes and their config can be specified as well, but 'useAllNodes' above must be set to false. Then, only the named
     # # nodes below will be used as storage resources.  Each node's 'name' field should match their 'kubernetes.io/hostname' label.
-    # nodes:
-    #   - name: "172.17.4.201"
+    nodes:
+      - name: "minikube"
+        deviceFilter: "sdc"
+      - name: "minikube-m02"
+        deviceFilter: "sdd"
+      - name: "minikube-mo03"
+        deviceFilter: "sde"
     #     devices: # specific devices to use for storage can be specified for each node
     #       - name: "sdb"
     #       - name: "nvme01" # multiple osds can be created on high performance devices
@@ -255,8 +260,7 @@ cephClusterSpec:
     #           osdsPerDevice: "5"
     #       - name: "/dev/disk/by-id/ata-ST4000DM004-XXXX" # devices can be specified using full udev paths
     #     config: # configuration can be specified at the node level which overrides the cluster level config
-    #   - name: "172.17.4.301"
-    #     deviceFilter: "^sd."
+
 
   # The section for configuring management of daemon disruptions during upgrade or fencing.
   disruptionManagement:
@@ -318,9 +322,9 @@ cephBlockPools:
       replicated:
         size: 3
     storageClass:
-      enabled: true
+      enabled: false
       name: ceph-block
-      isDefault: true
+      isDefault: false
       reclaimPolicy: Delete
       allowVolumeExpansion: true
       # see https://github.com/rook/rook/blob/master/Documentation/ceph-block.md#provision-storage for available configuration
@@ -371,7 +375,7 @@ cephFileSystems:
         activeStandby: true
     storageClass:
       enabled: true
-      isDefault: false
+      isDefault: true
       name: ceph-filesystem
       reclaimPolicy: Delete
       allowVolumeExpansion: true
@@ -412,7 +416,7 @@ cephObjectStores:
         bucket:
           interval: 60s
     storageClass:
-      enabled: true
+      enabled: false
       name: ceph-bucket
       reclaimPolicy: Delete
       # see https://github.com/rook/rook/blob/master/Documentation/ceph-object-bucket-claim.md#storageclass for available configuration
