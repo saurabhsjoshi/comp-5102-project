@@ -38,12 +38,6 @@ helm delete --namespace rook-ceph rook-ceph-cluster
 minikube delete --all
 ```
 
-## Setting up Rook toolbox
-1. Create `kubectl create -f cluster/examples/kubernetes/ceph/toolbox.yaml`
-2. Rollout `kubectl -n rook-ceph rollout status deploy/rook-ceph-tools`
-3. Exec `kubectl -n rook-ceph exec -it deploy/rook-ceph-tools -- bash`
-4. Run `ceph status` to get status of the cluster or `ceph -w`for watching status
-
 ## Accessing K8s dashboard
 1. Install dashboard on cluster
 ```commandline
