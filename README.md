@@ -18,7 +18,7 @@ sudo sgdisk --zap-all $DISK && \
 sudo dd if=/dev/zero of="$DISK" bs=1M count=100 oflag=direct,dsync && \
 sudo blkdiscard $DISK
 ```
-2. Start 3 node K8s cluster `minikube start --nodes 3 -p rook-project`
+2. Start 4 node K8s cluster `minikube start --nodes 4 -p rook-project`
 3. Check storage devices have no parition by doing `lsblk -f`
 4. Add helm repo for rook `helm repo add rook-release https://charts.rook.io/release`
 5. Deploy Rook operator 

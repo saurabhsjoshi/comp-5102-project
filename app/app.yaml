@@ -10,22 +10,31 @@ spec:
       storage: 8Gi
   storageClassName: ceph-filesystem
 ---
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: fio-test
 spec:
-  volumes:
-    # Use the Ceph FS that we have provisioned
-    - name: test-storage
-      persistentVolumeClaim:
-        claimName: cephfs-pvc
-        readOnly: false
-  containers:
-    - name: fio-test
-      image: joshio94/dos:latest
-      # Mount our volume to /data inside the container
-      volumeMounts:
-        - mountPath: "/data"
-          name: test-storage
-  restartPolicy: Never
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fio-test-app
+  template:
+    metadata:
+      labels:
+        app: fio-test-app
+    spec:
+      containers:
+      - name: fio-test
+        image: joshio94/dos:latest
+        # Mount our volume to /data inside the container
+        volumeMounts:
+          - mountPath: "/data"
+            name: test-storage
+      volumes:
+        # Use the Ceph FS that we have provisioned
+        - name: test-storage
+          persistentVolumeClaim:
+            claimName: cephfs-pvc
+            readOnly: false
+  

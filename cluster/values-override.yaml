@@ -17,8 +17,8 @@ operatorNamespace: rook-ceph
 
 # Installs a debugging toolbox deployment
 toolbox:
-  enabled: false
-  image: rook/ceph:VERSION
+  enabled: true
+  image: rook/ceph:v1.7.8
   tolerations: []
   affinity: {}
 
@@ -92,7 +92,7 @@ cephClusterSpec:
   dashboard:
     enabled: true
     # serve the dashboard under a subpath (useful when you are accessing the dashboard via a reverse proxy)
-    # urlPrefix: /ceph-dashboard
+    urlPrefix: /ceph
     # serve the dashboard at the given port.
     # port: 8443
     # serve the dashboard using SSL
@@ -247,11 +247,11 @@ cephClusterSpec:
     # # Individual nodes and their config can be specified as well, but 'useAllNodes' above must be set to false. Then, only the named
     # # nodes below will be used as storage resources.  Each node's 'name' field should match their 'kubernetes.io/hostname' label.
     nodes:
-      - name: "rook-project"
-        deviceFilter: "sdc"
       - name: "rook-project-m02"
-        deviceFilter: "sdd"
+        deviceFilter: "sdc"
       - name: "rook-project-m03"
+        deviceFilter: "sdd"
+      - name: "rook-project-m04"
         deviceFilter: "sde"
     #     devices: # specific devices to use for storage can be specified for each node
     #       - name: "sdb"
