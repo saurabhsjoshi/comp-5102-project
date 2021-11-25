@@ -18,7 +18,7 @@ sudo sgdisk --zap-all $DISK && \
 sudo dd if=/dev/zero of="$DISK" bs=1M count=100 oflag=direct,dsync && \
 sudo blkdiscard $DISK
 ```
-2. Start 4 node K8s cluster `minikube start --nodes 4 -p rook-project`
+2. Start 4 node K8s cluster `minikube start --nodes 4 -p rook-project --cpus 6 --memory 8g`
 3. Check storage devices have no parition by doing `lsblk -f`
 4. Add helm repo for rook `helm repo add rook-release https://charts.rook.io/release`
 5. Deploy Rook operator 
@@ -39,6 +39,7 @@ minikube delete --all
 ```
 
 ## Accessing K8s dashboard
+If using minikube just run `minikube -p rook-project dashboard` to get dashboard. Otherwise manually deploy:
 1. Install dashboard on cluster
 ```commandline
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
