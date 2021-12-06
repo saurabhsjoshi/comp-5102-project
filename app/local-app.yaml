@@ -1,21 +1,9 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: cephfs-pvc
-spec:
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-      storage: 8Gi
-  storageClassName: ceph-filesystem
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fio-test
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: fio-test-app
@@ -39,9 +27,7 @@ spec:
           - mountPath: "/data"
             name: test-storage
       volumes:
-        # Use the Ceph FS that we have provisioned
         - name: test-storage
-          persistentVolumeClaim:
-            claimName: cephfs-pvc
-            readOnly: false
+          hostPath:
+            path: /mnt/drive
   
